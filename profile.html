@@ -3,27 +3,31 @@
 <head>
   <title>Duck</title>
   <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@100..900&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@100..900&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      text-align: center; /* Center text on the page */
+    }
+    #user {
+      font-size: 24px; /* Adjust font size as needed */
+      margin-top: 20px;
+    }
+  </style>
+</head>
 <body>
+  <center>
+    <img src="https://i.postimg.cc/gj5cjhgV/CF8-B7771-2095-45-F1-AF17-ADE4-D690-A29-E.png" width="120px" style="margin-top: 50px;">
+    <h1 id="user"></h1>
+  </center>
 
-<center>
-<img src="https://i.postimg.cc/gj5cjhgV/CF8-B7771-2095-45-F1-AF17-ADE4-D690-A29-E.png" width="120px" style="margin-top: 50px;">
-<h1 id="user"></h1>
-</center>
-
-<style>
-body {
-    background-color: black;
-    color: white;
-}
-</style>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getDatabase, ref, set, get, child, onValue } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyBhTL7JcmGtdwPpJyKkwMRoIEOIU17ZxUk",
@@ -36,14 +40,21 @@ import { getDatabase, ref, set, get, child, onValue } from "https://www.gstatic.
         measurementId: "G-YENX5XCT8J"
     };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-        const user = document.getElementById("user");
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const user = document.getElementById("user");
+    const targetUserID = "yourUserIDHere"; // Replace with the actual user ID
 
-        sortedCounts.forEach(([userId]) => {
-            const idCell = row.insertCell();
-            idCell.textContent = userId;
-        });
-</script>
+    const userCountsRef = ref(db, "userCounts");
+    // Use onValue to listen for changes in Firebase
+    onValue(userCountsRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data && data[targetUserID]) {
+          user.textContent = `User: ${targetUserID}, Count: ${data[targetUserID]}`;
+      } else {
+        user.textContent = "User data not found.";
+      }
+    });
+  </script>
 </body>
 </html>
