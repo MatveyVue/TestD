@@ -22,6 +22,7 @@ body {
 </style>
 
 <script type="module">
+<script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getDatabase, ref, set, get, child, onValue } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
@@ -37,23 +38,23 @@ import { getDatabase, ref, set, get, child, onValue } from "https://www.gstatic.
         };
 
         const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const leaderboardBody = document.getElementById("user");
-const myUserID = "YOUR_USER_ID_HERE"; // Replace with your actual user ID
 
-// Correctly reference the data location in your Firebase database.
-const countsRef = ref(db, 'counts/');
+        const db = getDatabase(app);
+        const leaderboardBody = document.getElementById("user");
 
-onValue(countsRef, (snapshot) => {
-  leaderboardBody.innerHTML = ""; // Clear the content
+        // Получаем данные из Firebase и обновляем таблицу
+        onValue(ref(db, 'counts/'), (snapshot) => {
+          leaderboardBody.innerHTML = ''; // Очищаем таблицу
 
-  const data = snapshot.val();
-  if (data && data[myUserID]) {
-    leaderboardBody.textContent = `User: ${myUserID}, Count: ${data[myUserID]}`;
-  } else {
-    leaderboardBody.textContent = "No data found for this user.";
-  }
-});
+          sortedCounts.forEach(([userId, count]) => {
+            const row = leaderboardBody.insertRow();
+            const idCell = row.insertCell();
+            const countCell = row.insertCell();
+            idCell.textContent = userId;
+            countCell.textContent = count.count;
+          });
+        });
+</script>
 </script>
 </body>
 </html>
