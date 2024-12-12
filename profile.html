@@ -37,26 +37,26 @@ import { getDatabase, ref, set, get, child, onValue } from "https://www.gstatic.
         };
 
         const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const leaderboardBody = document.getElementById("user");
 
-        const db = getDatabase(app);
-        const leaderboardBody = document.getElementById("user");
+// Correctly reference the data location in your Firebase database.
+const countsRef = ref(db, 'counts/');
 
-        // Получаем данные из Firebase и обновляем таблицу
-        onValue(ref(db, 'counts/'), (snapshot) => {
-          leaderboardBody.innerHTML = ''; // Очищаем таблицу
+onValue(countsRef, (snapshot) => {
+  leaderboardBody.innerHTML = ""; // Clear the content
 
-          // Сортируем данные по количеству лайков в обратном порядке
-          const sortedCounts = Object.entries(snapshot.val()).sort((a, b) => b[1].count - a[1].count);
-
-          // Отображаем данные в таблице
-          sortedCounts.forEach(([userId, count]) => {
-            const row = leaderboardBody.insertRow();
-            const idCell = row.insertCell();
-            const countCell = row.insertCell();
-            idCell.textContent = userId;
-            countCell.textContent = count.count;
-          });
-        });
+  const data = snapshot.val();
+  if (data) {
+    let userList = "";
+    Object.keys(data).forEach(userId => {
+      userList += `<li>${userId}</li>`;
+    });
+    leaderboardBody.innerHTML = `<ul>${userList}</ul>`; // Display as unordered list
+  } else {
+    leaderboardBody.textContent = "No user data found."; // Handle empty data
+  }
+});
 </script>
 </body>
 </html>
