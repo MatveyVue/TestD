@@ -3,58 +3,60 @@
 <head>
   <title>Duck</title>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@100..900&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      background-color: black;
-      color: white;
-      text-align: center; /* Center text on the page */
-    }
-    #user {
-      font-size: 24px; /* Adjust font size as needed */
-      margin-top: 20px;
-    }
-  </style>
-</head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@100..900&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
 <body>
-  <center>
-    <img src="https://i.postimg.cc/gj5cjhgV/CF8-B7771-2095-45-F1-AF17-ADE4-D690-A29-E.png" width="120px" style="margin-top: 50px;">
-    <h1 id="user"></h1>
-  </center>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+<center>
+<img src="https://i.postimg.cc/gj5cjhgV/CF8-B7771-2095-45-F1-AF17-ADE4-D690-A29-E.png" width="120px" style="margin-top: 50px;">
+<h1 id="user"></h1>
+</center>
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyBhTL7JcmGtdwPpJyKkwMRoIEOIU17ZxUk",
-        authDomain: "tapalka-c9556.firebaseapp.com",
-        databaseURL: "https://tapalka-c9556-default-rtdb.firebaseio.com",
-        projectId: "tapalka-c9556",
-        storageBucket: "tapalka-c9556.firebasestorage.app",
-        messagingSenderId: "386428968826",
-        appId: "1:386428968826:web:de56837a0bbc2cf27940c3",
-        measurementId: "G-YENX5XCT8J"
-    };
+<style>
+body {
+    background-color: black;
+    color: white;
+}
+</style>
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    const user = document.getElementById("user");
-    const targetUserID = "yourUserIDHere"; // Replace with the actual user ID
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getDatabase, ref, set, get, child, onValue } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
-    const userCountsRef = ref(db, "userCounts");
-    // Use onValue to listen for changes in Firebase
-    onValue(userCountsRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data && data[targetUserID]) {
-          user.textContent = `User: ${targetUserID}, Count: ${data[targetUserID]}`;
-      } else {
-        user.textContent = "User data not found.";
-      }
-    });
-  </script>
+        const firebaseConfig = {
+          apiKey: "AIzaSyBhTL7JcmGtdwPpJyKkwMRoIEOIU17ZxUk",
+          authDomain: "tapalka-c9556.firebaseapp.com",
+          databaseURL: "https://tapalka-c9556-default-rtdb.firebaseio.com",
+          projectId: "tapalka-c9556",
+          storageBucket: "tapalka-c9556.firebasestorage.app",
+          messagingSenderId: "386428968826",
+          appId: "1:386428968826:web:de56837a0bbc2cf27940c3",
+          measurementId: "G-YENX5XCT8J"
+        };
+
+        const app = initializeApp(firebaseConfig);
+
+        const db = getDatabase(app);
+        const leaderboardBody = document.getElementById("user");
+
+        // Получаем данные из Firebase и обновляем таблицу
+        onValue(ref(db, 'counts/'), (snapshot) => {
+          leaderboardBody.innerHTML = ''; // Очищаем таблицу
+
+          // Сортируем данные по количеству лайков в обратном порядке
+          const sortedCounts = Object.entries(snapshot.val()).sort((a, b) => b[1].count - a[1].count);
+
+          // Отображаем данные в таблице
+          sortedCounts.forEach(([userId, count]) => {
+            const row = leaderboardBody.insertRow();
+            const idCell = row.insertCell();
+            const countCell = row.insertCell();
+            idCell.textContent = userId;
+            countCell.textContent = count.count;
+          });
+        });
+</script>
 </body>
 </html>
